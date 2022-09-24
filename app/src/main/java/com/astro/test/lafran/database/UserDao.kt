@@ -6,8 +6,8 @@ import com.astro.test.lafran.database.entity.UserEntity
 @Dao
 interface UserDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(userEntity: List<UserEntity>): Int
+    @Insert
+    suspend fun insert(userEntity: List<UserEntity>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(userEntity: UserEntity): Int

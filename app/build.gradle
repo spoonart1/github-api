@@ -40,7 +40,7 @@ dependencies {
     def okhttp_version = "3.4.0"
     def coroutine_version = "1.5.2"
     def dagger_hilt = "2.44"
-    def androidx_dagger_hilt = "1.0.0-alpha03"
+    def lifecycle_version = "2.5.1"
 
     //room database
     implementation "androidx.room:room-runtime:$room_version"
@@ -58,8 +58,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
 
     // Dagger Hilt
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$androidx_dagger_hilt"
-    kapt "androidx.hilt:hilt-compiler:$androidx_dagger_hilt"
     implementation "com.google.dagger:hilt-android:$dagger_hilt"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt"
 
@@ -67,6 +65,9 @@ dependencies {
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$dagger_hilt"
     testImplementation "com.google.dagger:hilt-android-testing:$dagger_hilt"
     kaptTest "com.google.dagger:hilt-android-compiler:$dagger_hilt"
+
+    //viewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'

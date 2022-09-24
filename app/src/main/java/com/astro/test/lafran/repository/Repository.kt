@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 interface Repository {
     suspend fun fetchRemoteUsers(): List<UserResponse>
-    suspend fun insertUsers(users: List<UserEntity>): Int
+    suspend fun insertUsers(users: List<UserEntity>)
     suspend fun getUsers(): List<UserEntity>
 }
 

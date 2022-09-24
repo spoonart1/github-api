@@ -3,7 +3,9 @@ package com.astro.test.lafran.feature.userlist
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.astro.test.lafran.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
