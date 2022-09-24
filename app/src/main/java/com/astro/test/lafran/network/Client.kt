@@ -7,8 +7,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Client {
-    private val token = "Bearer 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"
-    val INSTANCE by lazy {
+    private const val token = "Bearer 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"
+    val API by lazy {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val okhttp = OkHttpClient.Builder()
@@ -26,5 +26,6 @@ object Client {
             .addConverterFactory(GsonConverterFactory.create())
             .client(okhttp)
             .build()
+            .create(ApiInterface::class.java)
     }
 }

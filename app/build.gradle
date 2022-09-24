@@ -37,6 +37,7 @@ dependencies {
     def room_version = "2.4.3";
     def retrofit_version = "2.1.0"
     def okhttp_version = "3.4.1"
+    def coroutine_version = "1.5.2"
 
     //room database
     implementation "androidx.room:room-runtime:$room_version"
@@ -45,13 +46,16 @@ dependencies {
 
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version") {
-        // exclude Retrofit’s OkHttp dependency module and define your own module import
         exclude module: 'okhttp'
     }
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation "com.squareup.okhttp3:okhttps:$okhttp_version"
+
+    // coroutine
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
