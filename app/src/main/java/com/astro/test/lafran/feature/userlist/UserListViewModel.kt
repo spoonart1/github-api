@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,16 +11,19 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class UserListViewModel @Inject constructor(
     private val useCase: UserListUseCase
 ) : ViewModel() {
     private val sinceLiveData = MutableLiveData<Int>()
+    private val userListLiveData = MutableLiveData<List<UserEntity>>()
 
     val since: LiveData<Int>
         get() = sinceLiveData
 
-    lateinit var userList: LiveData<PagingData<UserEntity>>
+    val userList: LiveData<List<UserEntity>>
+        get() = userListLiveData
 
     init {
         //initial load
@@ -32,13 +34,13 @@ class UserListViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.getUsers(orderBy, since)
                 .catch { it.printStackTrace() }
-                .collect {
-                    println(it)
+                .collect { data ->
+                    userListLiveData.value = data
                 }
         }
     }
 
-    private fun setPage(since: Int) {
+    fun setPage(since: Int) {
         sinceLiveData.value = since
     }
 
