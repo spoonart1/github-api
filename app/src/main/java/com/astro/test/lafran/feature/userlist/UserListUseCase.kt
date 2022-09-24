@@ -1,5 +1,7 @@
 package com.astro.test.lafran.feature.userlist
 
+import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
 import com.astro.test.lafran.repository.Repository
@@ -10,14 +12,15 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 interface UserListUseCase {
-    fun getUsers(orderBy: OrderBy, since: Int): Flow<List<UserEntity>>
+    fun fetchUser(orderBy: OrderBy, since: Int): Flow<Int>
+    fun getUsers(orderBy: OrderBy): LiveData<PagedList<UserEntity>>
 }
 
 class UserListUseCaseImpl @Inject constructor(
     private val repository: Repository
 ) : UserListUseCase {
 
-    override fun getUsers(orderBy: OrderBy, since: Int) = flow {
+    override fun fetchUser(orderBy: OrderBy, since: Int) = flow {
         val users = repository.fetchRemoteUsers(since)
         val entities = users.map {
             return@map UserEntity(
@@ -27,8 +30,9 @@ class UserListUseCaseImpl @Inject constructor(
             )
         }
         repository.insertUsers(entities)
-        val userData = repository.getUsers(orderBy)
-        emit(userData)
+        kotlinx.coroutines.delay(2000)
+        emit(entities.size)
     }.flowOn(Dispatchers.IO)
 
+    override fun getUsers(orderBy: OrderBy) = repository.getUsers(orderBy)
 }

@@ -16,9 +16,6 @@ class UserListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserListBinding
     private lateinit var adapter: UserListAdapter
 
-    private var orderBy = OrderBy.ASC
-    private var sinceValue = 0;
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserListBinding.inflate(layoutInflater)
@@ -34,8 +31,7 @@ class UserListActivity : AppCompatActivity() {
 
     private fun initView() {
         binding.radioGroup.setOnCheckedChangeListener { _, id ->
-            orderBy = getDefaultOrder(id)
-            fetchUser()
+            viewModel.setFilter(getDefaultOrder(id))
         }
 
         adapter = UserListAdapter()
@@ -48,27 +44,18 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        viewModel.since.observe(this) {
-            sinceValue = it
-            fetchUser()
-        }
-
         viewModel.userList.observe(this) { data ->
-            adapter.submitData(data)
+            adapter.submitList(data)
         }
-    }
 
-    private fun fetchUser() {
-        viewModel.fetchUser(getOrderBy(), getSinceValue())
+        viewModel.networkState.observe(this) { networkState ->
+            adapter.setState(networkState)
+        }
     }
 
     private fun getDefaultOrder(viewId: Int) = when (viewId) {
         binding.rbAscending.id -> OrderBy.ASC
         else -> OrderBy.DESC
     }
-
-    private fun getSinceValue() = sinceValue
-
-    private fun getOrderBy() = orderBy
 
 }

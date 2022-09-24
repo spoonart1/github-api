@@ -50,7 +50,7 @@ dependencies {
     def coroutine_version = "1.5.2"
     def dagger_version = "2.44"
     def navigation_version = "2.5.1"
-    def paging_version = "3.1.1"
+    def paging_version = "2.1.2"
 
     //room database
     implementation "androidx.room:room-runtime:$room_version"
@@ -93,7 +93,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation_version"
     implementation 'com.google.android.material:material:1.6.1'
-    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
     // Testing
     testImplementation 'junit:junit:4.13.1'

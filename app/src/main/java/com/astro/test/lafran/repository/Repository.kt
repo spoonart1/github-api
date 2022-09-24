@@ -1,5 +1,10 @@
 package com.astro.test.lafran.repository
 
+import androidx.lifecycle.LiveData
+import androidx.paging.Config
+import androidx.paging.PagedList
+import androidx.paging.toLiveData
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.UserDao
 import com.astro.test.lafran.database.entity.UserEntity
@@ -13,7 +18,7 @@ import javax.inject.Inject
 interface Repository {
     suspend fun fetchRemoteUsers(since: Int = 1): List<UserResponse>
     suspend fun insertUsers(users: List<UserEntity>)
-    suspend fun getUsers(orderBy: OrderBy): List<UserEntity>
+    fun getUsers(orderBy: OrderBy): LiveData<PagedList<UserEntity>>
 }
 
 @Module
@@ -27,5 +32,8 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun insertUsers(users: List<UserEntity>) = userDao.insert(users)
 
-    override suspend fun getUsers(orderBy: OrderBy) = userDao.getAll(orderBy.name)
+    override fun getUsers(orderBy: OrderBy): LiveData<PagedList<UserEntity>> {
+        val query = SimpleSQLiteQuery("SELECT * from user ORDER BY user_id ${orderBy.name}")
+        return userDao.getAll(query).toLiveData(Config(30))
+    }
 }
