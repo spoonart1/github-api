@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -36,8 +37,10 @@ dependencies {
 
     def room_version = "2.4.3";
     def retrofit_version = "2.1.0"
-    def okhttp_version = "3.4.1"
+    def okhttp_version = "3.4.0"
     def coroutine_version = "1.5.2"
+    def dagger_hilt = "2.44"
+    def androidx_dagger_hilt = "1.0.0-alpha03"
 
     //room database
     implementation "androidx.room:room-runtime:$room_version"
@@ -45,17 +48,25 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     //retrofit
-    implementation("com.squareup.retrofit2:retrofit:$retrofit_version") {
-        exclude module: 'okhttp'
-    }
+    implementation"com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    implementation "com.squareup.okhttp3:okhttps:$okhttp_version"
 
     // coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+
+    // Dagger Hilt
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$androidx_dagger_hilt"
+    kapt "androidx.hilt:hilt-compiler:$androidx_dagger_hilt"
+    implementation "com.google.dagger:hilt-android:$dagger_hilt"
+    kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt"
+
+    androidTestImplementation  "com.google.dagger:hilt-android-testing:$dagger_hilt"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$dagger_hilt"
+    testImplementation "com.google.dagger:hilt-android-testing:$dagger_hilt"
+    kaptTest "com.google.dagger:hilt-android-compiler:$dagger_hilt"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'

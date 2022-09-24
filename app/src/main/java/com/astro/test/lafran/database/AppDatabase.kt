@@ -14,6 +14,8 @@ import com.astro.test.lafran.database.entity.UserEntity
 )
 abstract class AppDatabase : RoomDatabase() {
 
+    abstract fun userDao() : UserDao
+
     companion object {
         private var INSTANCE: AppDatabase? = null
 

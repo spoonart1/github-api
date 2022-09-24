@@ -1,4 +1,4 @@
-package com.astro.test.lafran.feature
+package com.astro.test.lafran.feature.userlist
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
