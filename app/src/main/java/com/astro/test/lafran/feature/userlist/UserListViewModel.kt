@@ -12,16 +12,12 @@ class UserListViewModel @Inject constructor(
     private val useCase: UserListUseCase
 ) : ViewModel() {
 
-    init {
-        fetchUsers()
-    }
-
-    private fun fetchUsers() {
+    fun fetchUsers() {
         viewModelScope.launch {
             useCase.getUsers()
                 .catch { it.printStackTrace() }
-                .collect { data ->
-                    print(data)
+                .collect {
+                    println(it)
                 }
         }
     }
