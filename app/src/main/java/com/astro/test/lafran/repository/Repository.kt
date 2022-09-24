@@ -1,5 +1,6 @@
 package com.astro.test.lafran.repository
 
+import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.UserDao
 import com.astro.test.lafran.database.entity.UserEntity
 import com.astro.test.lafran.network.ApiInterface
@@ -10,9 +11,9 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import javax.inject.Inject
 
 interface Repository {
-    suspend fun fetchRemoteUsers(): List<UserResponse>
+    suspend fun fetchRemoteUsers(since: Int = 1): List<UserResponse>
     suspend fun insertUsers(users: List<UserEntity>)
-    suspend fun getUsers(): List<UserEntity>
+    suspend fun getUsers(orderBy: OrderBy): List<UserEntity>
 }
 
 @Module
@@ -22,9 +23,9 @@ class RepositoryImpl @Inject constructor(
     private val api: ApiInterface
 ) : Repository {
 
-    override suspend fun fetchRemoteUsers() = api.getUsers()
+    override suspend fun fetchRemoteUsers(since: Int) = api.getUsers(since)
 
     override suspend fun insertUsers(users: List<UserEntity>) = userDao.insert(users)
 
-    override suspend fun getUsers() = userDao.getAll()
+    override suspend fun getUsers(orderBy: OrderBy) = userDao.getAll(orderBy.name)
 }
