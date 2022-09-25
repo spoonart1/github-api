@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
-import com.astro.test.lafran.feature.userlist.adapter.UserListAdapter
 import com.astro.test.lafran.network.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,11 +16,11 @@ class UserListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val sinceLiveData = MutableLiveData<Int>()
-    private val filter = MutableLiveData<OrderBy>()
+    val filter = MutableLiveData<Pair<OrderBy, String?>>()
     private val networkStateLiveData = MutableLiveData<NetworkState>()
 
     val userList: LiveData<PagedList<UserEntity>> = filter.switchMap {
-        useCase.getUsers(it)
+        useCase.getUsers(it.first, it.second)
     }
 
     val networkState: LiveData<NetworkState>
@@ -35,7 +34,7 @@ class UserListViewModel @Inject constructor(
     }
 
     fun fetchUser() = viewModelScope.launch {
-        val orderBy = filter.value ?: OrderBy.ASC
+        val orderBy = filter.value?.first ?: OrderBy.ASC
         val since = sinceLiveData.value ?: 0
 
         setNetworkState(NetworkState.Loading)
@@ -46,7 +45,12 @@ class UserListViewModel @Inject constructor(
     }
 
     fun setFilter(orderBy: OrderBy) {
-        this.filter.value = orderBy
+        this.filter.value = Pair(orderBy, null)
+    }
+
+    fun setKeyword(keyword: String) {
+        val currentFilter = filter.value?.first ?: OrderBy.ASC
+        this.filter.value = Pair(currentFilter, keyword)
     }
 
     fun setPage(since: Int) {

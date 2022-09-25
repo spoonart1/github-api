@@ -1,15 +1,21 @@
 package com.astro.test.lafran.feature.userlist
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.astro.test.lafran.R
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.databinding.ActivityUserListBinding
 import com.astro.test.lafran.feature.userlist.adapter.UserListAdapter
 import com.astro.test.lafran.network.NetworkState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserListActivity : AppCompatActivity() {
@@ -25,13 +31,16 @@ class UserListActivity : AppCompatActivity() {
         binding = ActivityUserListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportActionBar?.title = "Github User"
-        supportActionBar?.subtitle = "Astro Test"
-        supportActionBar?.elevation = 0f
-
+        setupActionBar()
         initView()
         initScrollListener()
         observe()
+    }
+
+    private fun setupActionBar() {
+        supportActionBar?.title = getString(R.string.action_bar_title)
+        supportActionBar?.subtitle = getString(R.string.action_bar_subtitle)
+        supportActionBar?.elevation = 0f
     }
 
     private fun initView() {
@@ -51,6 +60,27 @@ class UserListActivity : AppCompatActivity() {
             viewModel.fetchUser()
             showLoading(false)
         }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(data: Editable?) {
+                if (data.isNullOrEmpty()) {
+                    viewModel.fetchUser()
+                    return
+                }
+
+                if (!isLoading && data.length >= 3) {
+                    lifecycleScope.launch {
+                        delay(2000)
+                        viewModel.setKeyword(data.toString())
+                    }
+                }
+            }
+
+        })
     }
 
     private fun initScrollListener() {
@@ -58,10 +88,9 @@ class UserListActivity : AppCompatActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                if (!isLoading) {
+                if (!isLoading && binding.etSearch.length() == 0) {
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1) {
-                        isLoading = true
-                        showLoading(isLoading)
+                        showLoading(true)
                         viewModel.setPage((viewModel.since.value ?: 0) + 30)
                     }
                 }
@@ -72,7 +101,6 @@ class UserListActivity : AppCompatActivity() {
     private fun observe() {
         viewModel.userList.observe(this) { data ->
             adapter.submitList(data) {
-                isLoading = false
                 showLoading(false)
             }
         }
@@ -94,6 +122,7 @@ class UserListActivity : AppCompatActivity() {
 
     private fun showLoading(refresh: Boolean) {
         binding.swipeRefresh.isRefreshing = refresh
+        isLoading = refresh
     }
 
 }

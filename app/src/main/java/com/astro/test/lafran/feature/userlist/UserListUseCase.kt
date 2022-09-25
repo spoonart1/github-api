@@ -13,7 +13,8 @@ import javax.inject.Inject
 
 interface UserListUseCase {
     fun fetchUser(orderBy: OrderBy, since: Int): Flow<Int>
-    fun getUsers(orderBy: OrderBy): LiveData<PagedList<UserEntity>>
+
+    fun getUsers(orderBy: OrderBy, keyword: String?): LiveData<PagedList<UserEntity>>
 }
 
 class UserListUseCaseImpl @Inject constructor(
@@ -34,5 +35,5 @@ class UserListUseCaseImpl @Inject constructor(
         emit(entities.size)
     }.flowOn(Dispatchers.IO)
 
-    override fun getUsers(orderBy: OrderBy) = repository.getUsers(orderBy)
+    override fun getUsers(orderBy: OrderBy, keyword: String?) = repository.getUsers(orderBy, keyword)
 }
