@@ -3,6 +3,8 @@ package com.astro.test.lafran.feature.userlist
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +14,7 @@ import com.astro.test.lafran.R
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.databinding.ActivityUserListBinding
 import com.astro.test.lafran.feature.userlist.adapter.UserListAdapter
+import com.astro.test.lafran.network.ErrorHandler
 import com.astro.test.lafran.network.NetworkState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -34,7 +37,7 @@ class UserListActivity : AppCompatActivity() {
         setupActionBar()
         initView()
         initScrollListener()
-        observe()
+        observer()
     }
 
     private fun setupActionBar() {
@@ -79,7 +82,6 @@ class UserListActivity : AppCompatActivity() {
                     }
                 }
             }
-
         })
     }
 
@@ -98,8 +100,9 @@ class UserListActivity : AppCompatActivity() {
         })
     }
 
-    private fun observe() {
+    private fun observer() {
         viewModel.userList.observe(this) { data ->
+            showUIError(data.isNullOrEmpty())
             adapter.submitList(data) {
                 showLoading(false)
             }
@@ -113,6 +116,11 @@ class UserListActivity : AppCompatActivity() {
         viewModel.since.observe(this) {
             viewModel.fetchUser()
         }
+
+        viewModel.error.observe(this) {
+            val message = ErrorHandler.mapError(it)
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun getDefaultOrder(viewId: Int) = when (viewId) {
@@ -123,6 +131,11 @@ class UserListActivity : AppCompatActivity() {
     private fun showLoading(refresh: Boolean) {
         binding.swipeRefresh.isRefreshing = refresh
         isLoading = refresh
+    }
+
+    private fun showUIError(show: Boolean) {
+        val visibility = if (show) View.VISIBLE else View.GONE
+        binding.tvNoData.visibility = visibility
     }
 
 }

@@ -6,6 +6,7 @@ import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
 import com.astro.test.lafran.network.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,8 +16,9 @@ class UserListViewModel @Inject constructor(
     private val useCase: UserListUseCase
 ) : ViewModel() {
 
-    private val sinceLiveData = MutableLiveData<Int>()
     val filter = MutableLiveData<Pair<OrderBy, String?>>()
+    private val sinceLiveData = MutableLiveData<Int>()
+    private val errorLiveData = MutableLiveData<Throwable>()
     private val networkStateLiveData = MutableLiveData<NetworkState>()
 
     val userList: LiveData<PagedList<UserEntity>> = filter.switchMap {
@@ -29,6 +31,9 @@ class UserListViewModel @Inject constructor(
     val since: LiveData<Int>
         get() = sinceLiveData
 
+    val error: LiveData<Throwable>
+        get() = errorLiveData
+
     init {
         fetchUser()
     }
@@ -38,10 +43,15 @@ class UserListViewModel @Inject constructor(
         val since = sinceLiveData.value ?: 0
 
         setNetworkState(NetworkState.Loading)
-        useCase.fetchUser(orderBy, since).collect {
-            setFilter(orderBy)
-            setNetworkState(NetworkState.Finished)
-        }
+        useCase.fetchUser(orderBy, since)
+            .catch { throwable ->
+                errorLiveData.postValue(throwable)
+                setNetworkState(NetworkState.Finished)
+            }
+            .collect {
+                setFilter(orderBy)
+                setNetworkState(NetworkState.Finished)
+            }
     }
 
     fun setFilter(orderBy: OrderBy) {

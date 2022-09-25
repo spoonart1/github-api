@@ -3,4 +3,5 @@
     <string name="et_hint"><i>Search</i></string>
     <string name="action_bar_title">Github User</string>
     <string name="action_bar_subtitle">Astro Test</string>
+    <string name="text_no_data">Data kosong</string>
 </resources>
