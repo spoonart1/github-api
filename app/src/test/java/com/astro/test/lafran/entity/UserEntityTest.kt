@@ -1,11 +1,11 @@
-package com.astro.test.lafran
+package com.astro.test.lafran.entity
 
 import com.astro.test.lafran.database.entity.UserEntity
 import org.junit.Assert
 import org.junit.Test
 
 
-class UserTest {
+class UserEntityTest {
 
     @Test
     fun testUserEntity() {
