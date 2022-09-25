@@ -5,6 +5,7 @@ import androidx.paging.PagedList
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
 import com.astro.test.lafran.feature.userlist.adapter.UserListAdapter
+import com.astro.test.lafran.network.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,24 +18,30 @@ class UserListViewModel @Inject constructor(
 
     private val sinceLiveData = MutableLiveData<Int>()
     private val filter = MutableLiveData<OrderBy>()
-    private val networkStateLiveData = MutableLiveData<UserListAdapter.NetworkState>()
+    private val networkStateLiveData = MutableLiveData<NetworkState>()
 
     val userList: LiveData<PagedList<UserEntity>> = filter.switchMap {
         useCase.getUsers(it)
     }
 
-    val networkState: LiveData<UserListAdapter.NetworkState>
+    val networkState: LiveData<NetworkState>
         get() = networkStateLiveData
 
+    val since: LiveData<Int>
+        get() = sinceLiveData
+
     init {
-        fetchUser(OrderBy.ASC, 0)
+        fetchUser()
     }
 
-    fun fetchUser(orderBy: OrderBy, since: Int) = viewModelScope.launch {
-        setNetworkState(UserListAdapter.NetworkState.Loading)
+    fun fetchUser() = viewModelScope.launch {
+        val orderBy = filter.value ?: OrderBy.ASC
+        val since = sinceLiveData.value ?: 0
+
+        setNetworkState(NetworkState.Loading)
         useCase.fetchUser(orderBy, since).collect {
             setFilter(orderBy)
-            setNetworkState(UserListAdapter.NetworkState.Finished)
+            setNetworkState(NetworkState.Finished)
         }
     }
 
@@ -46,7 +53,7 @@ class UserListViewModel @Inject constructor(
         sinceLiveData.value = since
     }
 
-    private fun setNetworkState(state: UserListAdapter.NetworkState) {
+    private fun setNetworkState(state: NetworkState) {
         networkStateLiveData.value = state
     }
 
