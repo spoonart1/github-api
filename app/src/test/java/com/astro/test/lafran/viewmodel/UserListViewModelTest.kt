@@ -53,5 +53,4 @@ class UserListViewModelTest {
         assertEquals(OrderBy.DESC, viewModel.filter.value!!.first)
         assertNull(viewModel.filter.value!!.second)
     }
-
 }
