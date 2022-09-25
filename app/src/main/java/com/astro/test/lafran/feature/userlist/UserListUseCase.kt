@@ -31,9 +31,9 @@ class UserListUseCaseImpl @Inject constructor(
             )
         }
         repository.insertUsers(entities)
-        kotlinx.coroutines.delay(2000)
         emit(entities.size)
     }.flowOn(Dispatchers.IO)
 
-    override fun getUsers(orderBy: OrderBy, keyword: String?) = repository.getUsers(orderBy, keyword)
+    override fun getUsers(orderBy: OrderBy, keyword: String?) =
+        repository.getUsers(orderBy, keyword)
 }
