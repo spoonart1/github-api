@@ -1,7 +1,7 @@
 package com.astro.test.lafran.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.astro.test.lafran.TestCoroutineRule
+import com.astro.test.lafran.utils.TestCoroutineRule
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.feature.userlist.UserListUseCase
 import com.astro.test.lafran.feature.userlist.UserListViewModel

@@ -1,6 +1,7 @@
 package com.astro.test.lafran.feature.userlist
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.paging.PagedList
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
@@ -14,7 +15,7 @@ import javax.inject.Inject
 interface UserListUseCase {
     fun fetchUser(orderBy: OrderBy, since: Int): Flow<Int>
 
-    fun getUsers(orderBy: OrderBy, keyword: String?): LiveData<PagedList<UserEntity>>
+    fun getUsers(orderBy: OrderBy, keyword: String?): DataSource.Factory<Int, UserEntity>
 }
 
 class UserListUseCaseImpl @Inject constructor(

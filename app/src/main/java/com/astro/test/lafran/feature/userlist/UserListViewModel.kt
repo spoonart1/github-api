@@ -1,7 +1,9 @@
 package com.astro.test.lafran.feature.userlist
 
 import androidx.lifecycle.*
+import androidx.paging.Config
 import androidx.paging.PagedList
+import androidx.paging.toLiveData
 import com.astro.test.lafran.database.OrderBy
 import com.astro.test.lafran.database.entity.UserEntity
 import com.astro.test.lafran.network.NetworkState
@@ -16,13 +18,17 @@ class UserListViewModel @Inject constructor(
     private val useCase: UserListUseCase
 ) : ViewModel() {
 
+    companion object{
+        const val PAGE_SIZE = 30
+    }
+
     val filter = MutableLiveData<Pair<OrderBy, String?>>()
     private val sinceLiveData = MutableLiveData<Int>()
     private val errorLiveData = MutableLiveData<Throwable>()
     private val networkStateLiveData = MutableLiveData<NetworkState>()
 
     val userList: LiveData<PagedList<UserEntity>> = filter.switchMap {
-        useCase.getUsers(it.first, it.second)
+        useCase.getUsers(it.first, it.second).toLiveData(Config(PAGE_SIZE))
     }
 
     val networkState: LiveData<NetworkState>

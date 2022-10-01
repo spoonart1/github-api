@@ -1,4 +1,4 @@
-package com.astro.test.lafran
+package com.astro.test.lafran.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -8,10 +8,10 @@ import androidx.room.Room
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.astro.test.lafran.utils.LiveDataTestUtil
-import com.astro.test.lafran.utils.TestCoroutineRule
 import com.astro.test.lafran.database.AppDatabase
 import com.astro.test.lafran.database.entity.UserEntity
+import com.astro.test.lafran.utils.TestCoroutineRule
+import com.astro.test.lafran.utils.getValueOrAwait
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
@@ -61,7 +61,7 @@ class UserDaoTest {
         val query = SimpleSQLiteQuery("SELECT * from user")
         val livedata = db.userDao().getAll(query).toLiveData(Config(30))
 
-        val items = LiveDataTestUtil.getValue(livedata)
+        val items = livedata.getValueOrAwait()
         assertThat(items.size, Is(1))
     }
 
@@ -69,7 +69,7 @@ class UserDaoTest {
     fun test_getUser_shouldReturn_empty() {
         val query = SimpleSQLiteQuery("SELECT * from user")
         val livedata = db.userDao().getAll(query).toLiveData(Config(30))
-        val items = LiveDataTestUtil.getValue(livedata)
+        val items = livedata.getValueOrAwait()
         assertThat(items.size, Is(0))
     }
 
@@ -97,7 +97,7 @@ class UserDaoTest {
 
     private fun getValue(query: String): PagedList<UserEntity> {
         val livedata = db.userDao().getAll(SimpleSQLiteQuery(query)).toLiveData(Config(30))
-        return LiveDataTestUtil.getValue(livedata)
+        return livedata.getValueOrAwait()
     }
 
 }
